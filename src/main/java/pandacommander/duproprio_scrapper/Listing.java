@@ -80,6 +80,10 @@ public class Listing {
 	public String getImageUrl() {
 		return imageUrl;
 	}
+	
+	public AddressCoordinates getAddressCoordinates() {
+		return new AddressCoordinates(latitude, longitude, address);
+	}
 
 	@Override
 	public String toString() {

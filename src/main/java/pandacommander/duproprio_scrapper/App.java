@@ -20,10 +20,13 @@ public class App {
 		int maxPrice = options.getInt("price.max");
 		int maxPageNumber = options.getInt("page.number.max");
 		
-		int commuteAddress = options.getInt("commute.address");
+		String commuteAddress = options.getString("commute.address");
 		int maxCommuteTime = options.getInt("commute.time.max");
 		List<String> metroStations = options.getList(String.class,"metro.stations");
-
+		
+		GeoCoder geoCoder = new GoogleGeoCoder(secrets);
+		AddressCoordinates commuteDestinationCoordinates = geoCoder.getAddressCoordinates(commuteAddress);
+		
 		// headless chrome driver
 		ChromeDriverService.Builder builder = new ChromeDriverService.Builder().withSilent(true);
 		ChromeDriverService service = builder.usingAnyFreePort().build();
@@ -31,10 +34,11 @@ public class App {
 		driverOptions.addArguments("headless");
 		ChromeDriver driver = new ChromeDriver(service, driverOptions);
 
-		Scraper scraper = new Scraper(regionCode, minPrice, maxPrice, driver);
+		Scraper scraper = new DuproprioScraper(regionCode, minPrice, maxPrice, driver);
 		List<Listing> listings = scraper.getListings(maxPageNumber);
 		for (Listing listing : listings) {
-			System.out.println(listing.toString());
+			System.out.println(geoCoder.getCommuteTimeSeconds(listing.getAddressCoordinates(),commuteDestinationCoordinates)/60);
 		}
+
 	}
 }
