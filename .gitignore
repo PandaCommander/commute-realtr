@@ -1,6 +1,9 @@
 
 # Created by https://www.gitignore.io/api/java,linux,maven,windows,eclipse,intellij
 
+### duproprio-scraper ###
+*secret.properties
+
 ### Eclipse ###
 
 .metadata
