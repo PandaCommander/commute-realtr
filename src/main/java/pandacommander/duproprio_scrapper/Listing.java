@@ -13,9 +13,11 @@ public class Listing {
 	private String bathrooms;
 	private String buildingDimensions;
 	private String lotDimensions;
+	private String imageUrl;
 
 	public Listing(String id, String longitude, String latitude, String price, String address, String city,
-			String description, String bedrooms, String bathrooms, String buildingDimensions, String lotDimensions) {
+			String description, String bedrooms, String bathrooms, String buildingDimensions, String lotDimensions,
+			String imageUrl) {
 		super();
 		Id = id;
 		this.longitude = longitude;
@@ -28,6 +30,7 @@ public class Listing {
 		this.bathrooms = bathrooms;
 		this.buildingDimensions = buildingDimensions;
 		this.lotDimensions = lotDimensions;
+		this.imageUrl = imageUrl;
 	}
 
 	public String getId() {
@@ -74,12 +77,16 @@ public class Listing {
 		return lotDimensions;
 	}
 
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
 	@Override
 	public String toString() {
 		return "Listing [Id=" + Id + ", longitude=" + longitude + ", latitude=" + latitude + ", price=" + price
 				+ ", address=" + address + ", city=" + city + ", description=" + description + ", bedrooms=" + bedrooms
 				+ ", bathrooms=" + bathrooms + ", buildingDimensions=" + buildingDimensions + ", lotDimensions="
-				+ lotDimensions + "]";
+				+ lotDimensions + ", imageUrl=" + imageUrl + "]";
 	}
 
 }

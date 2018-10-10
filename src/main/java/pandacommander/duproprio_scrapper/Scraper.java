@@ -1,13 +1,12 @@
-package pandacommander.duproprio_scrapper.scraping;
+package pandacommander.duproprio_scrapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.configuration2.Configuration;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
-import pandacommander.duproprio_scrapper.Listing;
 
 public class Scraper {
 
@@ -91,6 +90,15 @@ public class Scraper {
 		} catch (Exception e) {
 			description = "";
 		}
+		
+		String imageUrl;
+		try {
+			WebElement imageContainer = listing
+					.findElement(By.tagName("img"));
+			imageUrl = imageContainer.getAttribute("src");
+		} catch (Exception e) {
+			imageUrl = "";
+		}
 
 		List<WebElement> characteristics = listing.findElements(By.cssSelector("div[class*='characteristics__item']"));
 		String bedrooms = "";
@@ -118,7 +126,7 @@ public class Scraper {
 		}
 
 		return new Listing(id, longitude, latitude, price, address, city, description, bedrooms, bathrooms,
-				buildingDimensions, lotDimensions);
+				buildingDimensions, lotDimensions, imageUrl);
 	}
 
 }
