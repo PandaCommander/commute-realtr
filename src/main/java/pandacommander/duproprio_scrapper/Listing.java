@@ -1,5 +1,7 @@
 package pandacommander.duproprio_scrapper;
 
+import pandacommander.duproprio_scrapper.geocoding.AddressCoordinates;
+
 public class Listing {
 
 	private String Id;

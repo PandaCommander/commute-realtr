@@ -1,9 +1,8 @@
-package pandacommander.duproprio_scrapper;
+package pandacommander.duproprio_scrapper.geocoding;
 
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import org.apache.commons.configuration2.Configuration;
 
@@ -18,8 +17,8 @@ public class GoogleGeoCoder extends GeoCoder {
 
 	GeoApiContext geoApiContext;
 
-	public GoogleGeoCoder(Configuration secrets) {
-		super(secrets);
+	public GoogleGeoCoder(Configuration secrets, Configuration options) {
+		super(secrets,options);
 		geoApiContext = new GeoApiContext.Builder().apiKey(secrets.getString("google.geocoding.token")).build();
 	}
 
@@ -40,13 +39,21 @@ public class GoogleGeoCoder extends GeoCoder {
 		return coords;
 	}
 
-	public double getCommuteTimeSeconds(AddressCoordinates origin, AddressCoordinates destination) {
+	@Override
+	public int getTransitTimeSeconds(AddressCoordinates origin, AddressCoordinates destination) {
+		return getTravelTimeSeconds(origin, destination,TravelMode.TRANSIT);
+	}
+	
+	@Override
+	public int getWalkTimeSeconds(AddressCoordinates origin, AddressCoordinates destination) {
+		return getTravelTimeSeconds(origin, destination,TravelMode.WALKING);
+	}
 
+	private int getTravelTimeSeconds(AddressCoordinates origin, AddressCoordinates destination, TravelMode mode) {
 		Calendar date = new GregorianCalendar();
 		date.add(Calendar.DAY_OF_MONTH, 1);
-		date.set(Calendar.HOUR_OF_DAY, 8); // TODO Unharcode
-		date.set(Calendar.MINUTE, 0);// TODO Unharcode
-		date.set(Calendar.SECOND, 0);
+		date.set(Calendar.HOUR_OF_DAY, options.getInt("commute.time.hours"));
+		date.set(Calendar.MINUTE, options.getInt("commute.time.minutes"));
 		date.set(Calendar.MILLISECOND, 0);
 
 		DirectionsResult result = null;
@@ -55,11 +62,15 @@ public class GoogleGeoCoder extends GeoCoder {
 		try {
 			result = DirectionsApi.newRequest(geoApiContext).origin(origin.getLatitude() + "," + origin.getLongitude())
 					.destination(destination.getLatitude() + "," + destination.getLongitude()).departureTime(time)
-					.mode(TravelMode.TRANSIT).await();
+					.mode(mode).await();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return result.routes[0].legs[0].duration.inSeconds;
+		return (int) result.routes[0].legs[0].duration.inSeconds;
 	}
+
+	
+	
+	
 }

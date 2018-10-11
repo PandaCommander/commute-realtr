@@ -1,23 +1,34 @@
-package pandacommander.duproprio_scrapper;
+package pandacommander.duproprio_scrapper.scraping;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.configuration2.Configuration;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class DuproprioScraper extends Scraper {
+import pandacommander.duproprio_scrapper.Listing;
 
-	static String baseUrl = "https://duproprio.com/en/search/list?search=true&regions[0]=%1$d&min_price=%2$d&max_price=%3$d&is_for_sale=1&with_builders=1&parent=1&pageNumber=%4$d&sort=-published_at";
+public class DuproprioCrawler extends Crawler {
 
-	public DuproprioScraper(int regionCode, int minPrice, int maxPrice, WebDriver driver) {
-		super(regionCode, minPrice, maxPrice, driver);
+	static String BASE_URL = "https://duproprio.com/en/search/list?search=true"
+			+ "&regions[0]=%1$d&min_price=%2$d&max_price=%3$d&is_for_sale=1"
+			+ "&with_builders=1&parent=1&pageNumber=%4$d&sort=-published_at";
+
+	public DuproprioCrawler(Configuration options, WebDriver driver) {
+		super(options, driver);
 	}
 
 	@Override
-	public List<Listing> getListings(int maxPages) {
-		String firstPageUrl = String.format(baseUrl, regionCode, minPrice, maxPrice, 1);
+	public List<Listing> getListings() {
+		int maxPages = getOptions().getInt("page.number.max");
+		int regionCode = getRegionCode();
+		int minPrice = getMinPrice();
+		int maxPrice = getMaxPrice();
+		String firstPageUrl = String.format(BASE_URL, regionCode, minPrice, maxPrice, 1);
+
+		WebDriver driver = getDriver();
 		driver.get(firstPageUrl);
 
 		List<Listing> listingModels = new ArrayList<Listing>();
@@ -30,7 +41,7 @@ public class DuproprioScraper extends Scraper {
 
 		maxPages = maxPages <= lastPageNumber ? maxPages : lastPageNumber;
 		for (int pageNumber = 1; pageNumber <= maxPages; pageNumber++) {
-			String newPageUrl = String.format(baseUrl, regionCode, minPrice, maxPrice, pageNumber);
+			String newPageUrl = String.format(BASE_URL, regionCode, minPrice, maxPrice, pageNumber);
 			driver.get(newPageUrl);
 
 			List<WebElement> listings = driver.findElements(By.cssSelector("li[id^='listing-']"));
@@ -42,14 +53,16 @@ public class DuproprioScraper extends Scraper {
 		return listingModels;
 	}
 
-	private Listing getListingModel(WebElement listing) {
-		String id = listing.getAttribute("id");
-		String longitude = listing.findElement(By.cssSelector("meta[property=longitude]")).getAttribute("content");
-		String latitude = listing.findElement(By.cssSelector("meta[property=latitude]")).getAttribute("content");
+	private Listing getListingModel(WebElement listingElements) {
+		String id = listingElements.getAttribute("id");
+		String longitude = listingElements.findElement(By.cssSelector("meta[property=longitude]"))
+				.getAttribute("content");
+		String latitude = listingElements.findElement(By.cssSelector("meta[property=latitude]"))
+				.getAttribute("content");
 
 		String price;
 		try {
-			WebElement priceContainer = listing
+			WebElement priceContainer = listingElements
 					.findElement(By.cssSelector("div[class=search-results-listings-list__item-description__price]"));
 			price = priceContainer.findElement(By.tagName("h2")).getText();
 		} catch (Exception e3) {
@@ -58,7 +71,8 @@ public class DuproprioScraper extends Scraper {
 
 		String address;
 		try {
-			WebElement addressContainer = listing.findElement(By.cssSelector("div[class*='description__address']"));
+			WebElement addressContainer = listingElements
+					.findElement(By.cssSelector("div[class*='description__address']"));
 			address = addressContainer.getText();
 		} catch (Exception e2) {
 			address = "";
@@ -66,7 +80,8 @@ public class DuproprioScraper extends Scraper {
 
 		String city;
 		try {
-			WebElement cityContainer = listing.findElement(By.cssSelector("div[class*='description__city-wrap']"));
+			WebElement cityContainer = listingElements
+					.findElement(By.cssSelector("div[class*='description__city-wrap']"));
 			city = cityContainer.findElement(By.tagName("span")).getText();
 		} catch (Exception e1) {
 			city = "";
@@ -74,7 +89,7 @@ public class DuproprioScraper extends Scraper {
 
 		String description;
 		try {
-			WebElement descriptionContainer = listing
+			WebElement descriptionContainer = listingElements
 					.findElement(By.cssSelector("div[class*='item-description__type-and-intro']"));
 			description = descriptionContainer.getText();
 		} catch (Exception e) {
@@ -83,13 +98,14 @@ public class DuproprioScraper extends Scraper {
 
 		String imageUrl;
 		try {
-			WebElement imageContainer = listing.findElement(By.tagName("img"));
+			WebElement imageContainer = listingElements.findElement(By.tagName("img"));
 			imageUrl = imageContainer.getAttribute("src");
 		} catch (Exception e) {
 			imageUrl = "";
 		}
 
-		List<WebElement> characteristics = listing.findElements(By.cssSelector("div[class*='characteristics__item']"));
+		List<WebElement> characteristics = listingElements
+				.findElements(By.cssSelector("div[class*='characteristics__item']"));
 		String bedrooms = "";
 		String bathrooms = "";
 		String buildingDimensions = "";

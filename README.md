@@ -11,9 +11,9 @@ Simple duproprio.com scraper to get listing by commute time and distance from me
 
 ## TODO
 - [x] Scrap
-- [ ] Log
-- [ ] Load options from file
-- [ ] Google maps api Integration
+- [ ] Logging and error handling
+- [x] Load options from file
+- [x] Google maps api Integration
 - [ ] Compute distance to nearest metro station
-- [ ] Compute commute time 
+- [x] Compute commute time 
 - [ ] Save report to PDF

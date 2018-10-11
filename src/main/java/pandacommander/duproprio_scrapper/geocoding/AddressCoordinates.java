@@ -1,4 +1,4 @@
-package pandacommander.duproprio_scrapper;
+package pandacommander.duproprio_scrapper.geocoding;
 
 public class AddressCoordinates {
 	public String latitude;
