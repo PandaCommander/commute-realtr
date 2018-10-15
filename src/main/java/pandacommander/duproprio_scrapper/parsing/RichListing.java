@@ -18,20 +18,16 @@ public class RichListing {
 		this.listing = listing;
 	}
 
-	protected int getMinuteToCommute() {
+	public int getMinuteToCommute() {
 		return minuteToCommute;
 	}
 
-	protected String getClosestMetro() {
+	public String getClosestMetro() {
 		return closestMetro;
 	}
 
-	protected int getWalkMinuteToMetro() {
+	public int getWalkMinuteToMetro() {
 		return walkMinuteToMetro;
-	}
-
-	public boolean equals(Object obj) {
-		return listing.equals(obj);
 	}
 
 	public String getId() {
@@ -81,9 +77,30 @@ public class RichListing {
 	public String getImageUrl() {
 		return listing.getImageUrl();
 	}
+	
+	public String getListingUrl() {
+		return listing.getListingUrl();
+	}
 
 	public AddressCoordinates getAddressCoordinates() {
 		return listing.getAddressCoordinates();
+	}
+	
+	public String getAttributes() {
+		String attributes = "";
+		if (getBedrooms() != null && !getBedrooms().isEmpty()) {
+			attributes += "Bedrooms: "+getBedrooms()+" ";
+		}
+		if (getBathrooms() != null && !getBathrooms().isEmpty()) {
+			attributes += "Bathrooms: "+getBathrooms()+" ";
+		}
+		if (getBuildingDimensions() != null && !getBuildingDimensions().isEmpty()) {
+			attributes += "Space: "+getBuildingDimensions()+" ";
+		}
+		if (getLotDimensions() != null && !getLotDimensions().isEmpty()) {
+			attributes += "Lot: "+getLotDimensions()+" ";
+		}
+		return attributes;
 	}
 
 	@Override

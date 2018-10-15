@@ -1,4 +1,4 @@
-package pandacommander.duproprio_scrapper.scraping;
+package pandacommander.duproprio_scrapper.crawler;
 
 import java.util.List;
 

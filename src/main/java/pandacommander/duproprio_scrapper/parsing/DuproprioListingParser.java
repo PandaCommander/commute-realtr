@@ -17,14 +17,19 @@ public class DuproprioListingParser extends ListingParser {
 	}
 
 	@Override
-	public List<RichListing> parseListings(List<Listing> listings) {
-		List<RichListing> richListings = new ArrayList<RichListing>();
+	public List<RichListing> getParsedListings(List<Listing> listings) {
+		List<RichListing> parsedListings = new ArrayList<RichListing>();
 		List<MetroStation> metros = getMetroStations();
-		for (Listing listing : listings) {
-			Configuration options = getOptions();
+		
+		Configuration options = getOptions();
+		String commuteAddress = options.getString("commute.address");
+		int maxCommute = options.getInt("commute.time.max",0);
+		int maxWalk = options.getInt("metro.closest.walk.time.max",0);
+		
+		for (Listing listing : listings) {	
 			GeoCoder geoCoder = getGeoCoder();
 
-			String commuteAddress = options.getString("commute.address");
+			
 			AddressCoordinates destinationAddress = geoCoder.getAddressCoordinates(commuteAddress);
 
 			int commuteTimeSeconds = geoCoder.getTransitTimeSeconds(listing.getAddressCoordinates(),
@@ -42,10 +47,15 @@ public class DuproprioListingParser extends ListingParser {
 			int metroWalkTimeSeconds = geoCoder.getWalkTimeSeconds(listing.getAddressCoordinates(),
 					closestMetro.getCoords());
 
-			richListings.add(new RichListing(commuteTimeSeconds / 60, closestMetro.getName(), metroWalkTimeSeconds / 60,
-					listing));
+			int commuteMinutes = commuteTimeSeconds / 60;
+			int walkingMinutes = metroWalkTimeSeconds / 60;
+			
+			if ( (maxCommute == 0 || maxCommute > commuteMinutes) && (maxWalk == 0 || maxWalk > walkingMinutes)) {
+				parsedListings.add(new RichListing(commuteMinutes, closestMetro.getName(), walkingMinutes,
+						listing));
+			}
 		}
-		return richListings;
+		return parsedListings;
 	}
 
 	private List<MetroStation> getMetroStations() {

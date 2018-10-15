@@ -17,7 +17,7 @@ public abstract class ListingParser {
 		GeoCoder = geoCoder;
 	}
 	
-	public abstract List<RichListing> parseListings(List<Listing> listins);
+	public abstract List<RichListing> getParsedListings(List<Listing> listins);
 
 	protected Configuration getOptions() {
 		return options;
