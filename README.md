@@ -1,4 +1,4 @@
-# duproprio-scraper
+# commute-realtr
 
 Simple duproprio.com scraper to get listing by commute time and distance from metro stations.
 
@@ -10,13 +10,19 @@ Simple duproprio.com scraper to get listing by commute time and distance from me
 - Maven
 
 ## TODO
+
 - [x] Scrap
-- [ ] Logging and error handling
 - [x] Load options from file
 - [x] Google maps api Integration
 - [x] Compute distance to nearest metro station
 - [x] Compute commute time 
-- [ ] Save report to ~~PDF~~ HTML
+- [x] Save report to ~~PDF~~ HTML
+- [ ] Logging and error handling
+- [ ] Add multiple scraping source support
+- [ ] Scrap Centris.ca
+- [ ] Scrap kijiji.ca
+- [ ] Add rental scraping
+- [ ] Add multi-threading
 - [ ] Database to store listings 
 
 ## Stretch
