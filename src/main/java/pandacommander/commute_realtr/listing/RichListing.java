@@ -1,7 +1,6 @@
-package pandacommander.duproprio_scrapper.parsing;
+package pandacommander.commute_realtr.listing;
 
-import pandacommander.duproprio_scrapper.Listing;
-import pandacommander.duproprio_scrapper.geocoding.AddressCoordinates;
+import pandacommander.commute_realtr.geocoding.AddressCoordinates;
 
 public class RichListing {
 
@@ -77,7 +76,7 @@ public class RichListing {
 	public String getImageUrl() {
 		return listing.getImageUrl();
 	}
-	
+
 	public String getListingUrl() {
 		return listing.getListingUrl();
 	}
@@ -85,20 +84,20 @@ public class RichListing {
 	public AddressCoordinates getAddressCoordinates() {
 		return listing.getAddressCoordinates();
 	}
-	
+
 	public String getAttributes() {
 		String attributes = "";
 		if (getBedrooms() != null && !getBedrooms().isEmpty()) {
-			attributes += "Bedrooms: "+getBedrooms()+" ";
+			attributes += "Bedrooms: " + getBedrooms() + " ";
 		}
 		if (getBathrooms() != null && !getBathrooms().isEmpty()) {
-			attributes += "Bathrooms: "+getBathrooms()+" ";
+			attributes += "Bathrooms: " + getBathrooms() + " ";
 		}
 		if (getBuildingDimensions() != null && !getBuildingDimensions().isEmpty()) {
-			attributes += "Space: "+getBuildingDimensions()+" ";
+			attributes += "Space: " + getBuildingDimensions() + " ";
 		}
 		if (getLotDimensions() != null && !getLotDimensions().isEmpty()) {
-			attributes += "Lot: "+getLotDimensions()+" ";
+			attributes += "Lot: " + getLotDimensions() + " ";
 		}
 		return attributes;
 	}

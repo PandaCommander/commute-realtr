@@ -1,8 +1,8 @@
-package pandacommander.duproprio_scrapper.template;
+package pandacommander.commute_realtr.template;
 
 import java.util.List;
 
-import pandacommander.duproprio_scrapper.parsing.RichListing;
+import pandacommander.commute_realtr.listing.RichListing;
 
 public interface ListingTemplateEngine {
 

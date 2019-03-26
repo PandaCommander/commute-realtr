@@ -1,6 +1,6 @@
-package pandacommander.duproprio_scrapper;
+package pandacommander.commute_realtr.listing;
 
-import pandacommander.duproprio_scrapper.geocoding.AddressCoordinates;
+import pandacommander.commute_realtr.geocoding.AddressCoordinates;
 
 public class Listing {
 

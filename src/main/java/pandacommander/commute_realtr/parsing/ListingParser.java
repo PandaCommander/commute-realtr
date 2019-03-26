@@ -1,11 +1,11 @@
-package pandacommander.duproprio_scrapper.parsing;
+package pandacommander.commute_realtr.parsing;
 
 import java.util.List;
-
 import org.apache.commons.configuration2.Configuration;
 
-import pandacommander.duproprio_scrapper.Listing;
-import pandacommander.duproprio_scrapper.geocoding.GeoCoder;
+import pandacommander.commute_realtr.geocoding.GeoCoder;
+import pandacommander.commute_realtr.listing.Listing;
+import pandacommander.commute_realtr.listing.RichListing;
 
 public abstract class ListingParser {
 	private Configuration options;
@@ -16,7 +16,7 @@ public abstract class ListingParser {
 		this.options = options;
 		GeoCoder = geoCoder;
 	}
-	
+
 	public abstract List<RichListing> getParsedListings(List<Listing> listins);
 
 	protected Configuration getOptions() {

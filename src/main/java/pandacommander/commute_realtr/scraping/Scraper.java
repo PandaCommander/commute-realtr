@@ -1,13 +1,13 @@
-package pandacommander.duproprio_scrapper.crawler;
+package pandacommander.commute_realtr.scraping;
 
 import java.util.List;
 
 import org.apache.commons.configuration2.Configuration;
 import org.openqa.selenium.WebDriver;
 
-import pandacommander.duproprio_scrapper.Listing;
+import pandacommander.commute_realtr.listing.Listing;
 
-public abstract class Crawler {
+public abstract class Scraper {
 
 	private int regionCode;
 	private int minPrice;
@@ -15,7 +15,7 @@ public abstract class Crawler {
 	private WebDriver driver;
 	private Configuration options;
 
-	public Crawler(Configuration options, WebDriver driver) {
+	public Scraper(Configuration options, WebDriver driver) {
 		super();
 		this.regionCode = options.getInt("region.code");
 		this.minPrice = options.getInt("price.min");

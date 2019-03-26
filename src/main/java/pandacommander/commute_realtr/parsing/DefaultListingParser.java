@@ -1,4 +1,4 @@
-package pandacommander.duproprio_scrapper.parsing;
+package pandacommander.commute_realtr.parsing;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,13 +6,14 @@ import java.util.List;
 
 import org.apache.commons.configuration2.Configuration;
 
-import pandacommander.duproprio_scrapper.Listing;
-import pandacommander.duproprio_scrapper.geocoding.AddressCoordinates;
-import pandacommander.duproprio_scrapper.geocoding.GeoCoder;
+import pandacommander.commute_realtr.geocoding.AddressCoordinates;
+import pandacommander.commute_realtr.geocoding.GeoCoder;
+import pandacommander.commute_realtr.listing.Listing;
+import pandacommander.commute_realtr.listing.RichListing;
 
-public class DuproprioListingParser extends ListingParser {
+public class DefaultListingParser extends ListingParser {
 
-	public DuproprioListingParser(Configuration options, GeoCoder geoCoder) {
+	public DefaultListingParser(Configuration options, GeoCoder geoCoder) {
 		super(options, geoCoder);
 	}
 
@@ -20,22 +21,20 @@ public class DuproprioListingParser extends ListingParser {
 	public List<RichListing> getParsedListings(List<Listing> listings) {
 		List<RichListing> parsedListings = new ArrayList<RichListing>();
 		List<MetroStation> metros = getMetroStations();
-		
 		Configuration options = getOptions();
-		String commuteAddress = options.getString("commute.address");
-		int maxCommute = options.getInt("commute.time.max",0);
-		int maxWalk = options.getInt("metro.closest.walk.time.max",0);
-		
-		for (Listing listing : listings) {	
-			GeoCoder geoCoder = getGeoCoder();
+		GeoCoder geoCoder = getGeoCoder();
 
-			
-			AddressCoordinates destinationAddress = geoCoder.getAddressCoordinates(commuteAddress);
+		String commuteAddress = options.getString("commute.address");
+		int maxCommute = options.getInt("commute.time.max", 0);
+		int maxWalk = options.getInt("metro.closest.walk.time.max", 0);
+
+		AddressCoordinates destinationAddress = geoCoder.getAddressCoordinates(commuteAddress);
+
+		for (Listing listing : listings) {
 
 			int commuteTimeSeconds = geoCoder.getTransitTimeSeconds(listing.getAddressCoordinates(),
 					destinationAddress);
 
-			
 			for (MetroStation metroStation : metros) {
 				double distanceInKm = geoCoder.getDistanceInKmBetweenEarthCoordinates(listing.getAddressCoordinates(),
 						metroStation.getCoords());
@@ -49,10 +48,9 @@ public class DuproprioListingParser extends ListingParser {
 
 			int commuteMinutes = commuteTimeSeconds / 60;
 			int walkingMinutes = metroWalkTimeSeconds / 60;
-			
-			if ( (maxCommute == 0 || maxCommute > commuteMinutes) && (maxWalk == 0 || maxWalk > walkingMinutes)) {
-				parsedListings.add(new RichListing(commuteMinutes, closestMetro.getName(), walkingMinutes,
-						listing));
+
+			if ((maxCommute == 0 || maxCommute > commuteMinutes) && (maxWalk == 0 || maxWalk > walkingMinutes)) {
+				parsedListings.add(new RichListing(commuteMinutes, closestMetro.getName(), walkingMinutes, listing));
 			}
 		}
 		return parsedListings;

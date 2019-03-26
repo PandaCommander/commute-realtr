@@ -1,6 +1,6 @@
-package pandacommander.duproprio_scrapper.parsing;
+package pandacommander.commute_realtr.parsing;
 
-import pandacommander.duproprio_scrapper.geocoding.AddressCoordinates;
+import pandacommander.commute_realtr.geocoding.AddressCoordinates;
 
 public class MetroStation implements Comparable<MetroStation> {
 

@@ -1,4 +1,4 @@
-package pandacommander.duproprio_scrapper.geocoding;
+package pandacommander.commute_realtr.geocoding;
 
 import java.time.Instant;
 import java.util.Calendar;
@@ -18,7 +18,7 @@ public class GoogleGeoCoder extends GeoCoder {
 	GeoApiContext geoApiContext;
 
 	public GoogleGeoCoder(Configuration secrets, Configuration options) {
-		super(secrets,options);
+		super(secrets, options);
 		geoApiContext = new GeoApiContext.Builder().apiKey(secrets.getString("google.geocoding.token")).build();
 	}
 
@@ -41,12 +41,12 @@ public class GoogleGeoCoder extends GeoCoder {
 
 	@Override
 	public int getTransitTimeSeconds(AddressCoordinates origin, AddressCoordinates destination) {
-		return getTravelTimeSeconds(origin, destination,TravelMode.TRANSIT);
+		return getTravelTimeSeconds(origin, destination, TravelMode.TRANSIT);
 	}
-	
+
 	@Override
 	public int getWalkTimeSeconds(AddressCoordinates origin, AddressCoordinates destination) {
-		return getTravelTimeSeconds(origin, destination,TravelMode.WALKING);
+		return getTravelTimeSeconds(origin, destination, TravelMode.WALKING);
 	}
 
 	private int getTravelTimeSeconds(AddressCoordinates origin, AddressCoordinates destination, TravelMode mode) {
@@ -70,7 +70,4 @@ public class GoogleGeoCoder extends GeoCoder {
 		return (int) result.routes[0].legs[0].duration.inSeconds;
 	}
 
-	
-	
-	
 }

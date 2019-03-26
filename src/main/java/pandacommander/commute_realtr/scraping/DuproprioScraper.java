@@ -1,4 +1,4 @@
-package pandacommander.duproprio_scrapper.crawler;
+package pandacommander.commute_realtr.scraping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +12,15 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import pandacommander.duproprio_scrapper.Listing;
+import pandacommander.commute_realtr.listing.Listing;
 
-public class DuproprioCrawler extends Crawler {
+public class DuproprioScraper extends Scraper {
 
 	static String BASE_URL = "https://duproprio.com/en/search/list?search=true"
 			+ "&regions[0]=%1$d&min_price=%2$d&max_price=%3$d&is_for_sale=1"
 			+ "&with_builders=1&parent=1&pageNumber=%4$d&sort=-published_at";
 
-	public DuproprioCrawler(Configuration options, WebDriver driver) {
+	public DuproprioScraper(Configuration options, WebDriver driver) {
 		super(options, driver);
 	}
 
@@ -47,9 +47,9 @@ public class DuproprioCrawler extends Crawler {
 		for (int pageNumber = 1; pageNumber <= maxPages; pageNumber++) {
 			String newPageUrl = String.format(BASE_URL, regionCode, minPrice, maxPrice, pageNumber);
 			driver.get(newPageUrl);
-			
+
 			// Wait for all photos to load
-			loadPhotos(driver);
+			loadPhotos(driver, pageNumber);
 
 			List<WebElement> listings = driver.findElements(By.cssSelector("li[id^='listing-']"));
 			for (WebElement listing : listings) {
@@ -60,11 +60,11 @@ public class DuproprioCrawler extends Crawler {
 		return listingModels;
 	}
 
-	protected void loadPhotos(WebDriver driver) {
+	protected void loadPhotos(WebDriver driver, int pageNumber) {
 		try {
 			// Simulate navigation on page to force load photos
 			Thread.sleep(100);
-			JavascriptExecutor jsx = (JavascriptExecutor)driver;
+			JavascriptExecutor jsx = (JavascriptExecutor) driver;
 			jsx.executeScript("window.focus()", "");
 			Thread.sleep(100);
 			driver.manage().window().maximize();
@@ -80,31 +80,13 @@ public class DuproprioCrawler extends Crawler {
 			Thread.sleep(100);
 			driver.manage().window().maximize();
 			Thread.sleep(100);
-			jsx.executeScript("window.scrollBy(0,500)");
-			Thread.sleep(100);
-			jsx.executeScript("window.scrollBy(0,500)");
-			Thread.sleep(100);
-			jsx.executeScript("window.scrollBy(0,500)");
-			Thread.sleep(100);
-			jsx.executeScript("window.scrollBy(0,500)");
 			jsx.executeScript("window.focus()", "");
 			Thread.sleep(100);
-			driver.manage().window().maximize();
-			Thread.sleep(100);
-			jsx.executeScript("window.scrollBy(0,500)");
-			Thread.sleep(100);
-			jsx.executeScript("window.scrollBy(0,500)");
-			Thread.sleep(100);
-			jsx.executeScript("window.scrollBy(0,500)");
-			Thread.sleep(100);
-			jsx.executeScript("window.scrollBy(0,500)");
-			
 			WebDriverWait wait = new WebDriverWait(driver, 5);
 			By listingImage = By.cssSelector("img[class*='search-results-listings-list__item-photo']");
 			wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(listingImage, 8));
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Photo wait timeout");
+			System.out.println("Failed to load all photos for page " + pageNumber);
 		}
 	}
 
@@ -158,10 +140,11 @@ public class DuproprioCrawler extends Crawler {
 		} catch (Exception e) {
 			imageUrl = "";
 		}
-		
+
 		String listingUrl;
 		try {
-			WebElement imageContainer = listingElements.findElement(By.cssSelector("a[class*='search-results-listings-list__item-image-link']"));
+			WebElement imageContainer = listingElements
+					.findElement(By.cssSelector("a[class*='search-results-listings-list__item-image-link']"));
 			listingUrl = imageContainer.getAttribute("href");
 		} catch (Exception e) {
 			listingUrl = "";

@@ -1,4 +1,4 @@
-package pandacommander.duproprio_scrapper.geocoding;
+package pandacommander.commute_realtr.geocoding;
 
 import org.apache.commons.configuration2.Configuration;
 
