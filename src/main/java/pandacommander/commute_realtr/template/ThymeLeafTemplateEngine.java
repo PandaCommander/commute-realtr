@@ -37,7 +37,7 @@ public class ThymeLeafTemplateEngine implements ListingTemplateEngine {
 		context.setVariable("listings", listings);
 
 		try (Writer writer = new OutputStreamWriter(new FileOutputStream(outputPath), StandardCharsets.UTF_8)) {
-			writer.write(templateEngine.process("ListingTemplate.html", context));
+			writer.write(templateEngine.process("index.html", context));
 			writer.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
