@@ -2,6 +2,11 @@ package pandacommander.commute_realtr.scraping;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.commons.configuration2.Configuration;
 import org.openqa.selenium.By;
@@ -12,6 +17,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import pandacommander.commute_realtr.crawling.WebDriverRepository;
 import pandacommander.commute_realtr.listing.Listing;
 
 public class DuproprioScraper extends Scraper {
@@ -19,9 +25,12 @@ public class DuproprioScraper extends Scraper {
 	static String BASE_URL = "https://duproprio.com/en/search/list?search=true"
 			+ "&regions[0]=%1$d&min_price=%2$d&max_price=%3$d&is_for_sale=1"
 			+ "&with_builders=1&parent=1&pageNumber=%4$d&sort=-published_at";
+	
+	private List<Listing> listings;
 
-	public DuproprioScraper(Configuration options, WebDriver driver) {
-		super(options, driver);
+	public DuproprioScraper(Configuration options, WebDriverRepository driverRepository) {
+		super(options, driverRepository);
+		listings = new ArrayList<>();
 	}
 
 	@Override
@@ -32,10 +41,8 @@ public class DuproprioScraper extends Scraper {
 		int maxPrice = getMaxPrice();
 		String firstPageUrl = String.format(BASE_URL, regionCode, minPrice, maxPrice, 1);
 
-		WebDriver driver = getDriver();
+		WebDriver driver = getDriverRepository().getNewWebDriver();
 		driver.get(firstPageUrl);
-
-		List<Listing> listingModels = new ArrayList<Listing>();
 
 		// Get last page number
 		WebElement paginationList = driver.findElement(By.cssSelector("ul.pagination__list"));
@@ -43,21 +50,46 @@ public class DuproprioScraper extends Scraper {
 		WebElement lastPagePagination = paginations.get(paginations.size() - 1).findElement(By.tagName("a"));
 		int lastPageNumber = Integer.parseInt(lastPagePagination.getText());
 
+		ExecutorService executor = Executors.newWorkStealingPool();
+		List<Callable<List<Listing>>> callableTasks = new ArrayList<>();
+
 		maxPages = maxPages <= lastPageNumber ? maxPages : lastPageNumber;
 		for (int pageNumber = 1; pageNumber <= maxPages; pageNumber++) {
+			callableTasks.add(getCallableListings(regionCode, minPrice, maxPrice,
+					getDriverRepository().getNewWebDriver(), pageNumber));
+		}
+
+		try {
+			List<Future<List<Listing>>> futureListings = executor.invokeAll(callableTasks);
+			listings = new ArrayList<>();
+			futureListings.forEach(l -> {
+				try {
+					listings.addAll(l.get());
+				} catch (InterruptedException | ExecutionException e) {
+				}
+			});
+		} catch (Exception e) {
+		}
+		
+		getDriverRepository().stopAllDrivers();
+		return listings;
+	}
+
+	protected Callable<List<Listing>> getCallableListings(int regionCode, int minPrice, int maxPrice, WebDriver driver,
+			int pageNumber) {
+		Callable<List<Listing>> runnableTask = () -> {
+			List<Listing> listingModels = new ArrayList<Listing>();
 			String newPageUrl = String.format(BASE_URL, regionCode, minPrice, maxPrice, pageNumber);
 			driver.get(newPageUrl);
-
 			// Wait for all photos to load
 			loadPhotos(driver, pageNumber);
-
 			List<WebElement> listings = driver.findElements(By.cssSelector("li[id^='listing-']"));
 			for (WebElement listing : listings) {
 				listingModels.add(getListingModel(listing));
 			}
-		}
-		driver.close();
-		return listingModels;
+			return listingModels;
+		};
+		return runnableTask;
 	}
 
 	protected void loadPhotos(WebDriver driver, int pageNumber) {
@@ -68,19 +100,38 @@ public class DuproprioScraper extends Scraper {
 			jsx.executeScript("window.focus()", "");
 			Thread.sleep(100);
 			driver.manage().window().maximize();
-			Thread.sleep(100);
+			Thread.sleep(10);
 			jsx.executeScript("window.scrollBy(0,500)");
-			Thread.sleep(100);
+			Thread.sleep(10);
 			jsx.executeScript("window.scrollBy(0,500)");
-			Thread.sleep(100);
+			Thread.sleep(10);
 			jsx.executeScript("window.scrollBy(0,500)");
-			Thread.sleep(100);
+			Thread.sleep(10);
 			jsx.executeScript("window.scrollBy(0,500)");
+			Thread.sleep(10);
+			jsx.executeScript("window.scrollBy(0,500)");
+			Thread.sleep(10);
+			jsx.executeScript("window.scrollBy(0,500)");
+			Thread.sleep(10);
+			jsx.executeScript("window.scrollBy(0,-200)");
+			Thread.sleep(10);
+			jsx.executeScript("window.scrollBy(0,-200)");
+			Thread.sleep(10);
+			jsx.executeScript("window.scrollBy(0,-200)");
+			Thread.sleep(10);
+			jsx.executeScript("window.scrollBy(0,-200)");
+			Thread.sleep(10);
+			jsx.executeScript("window.scrollBy(0,-200)");
+			Thread.sleep(10);
+			jsx.executeScript("window.scrollBy(0,-200)");
+			Thread.sleep(10);
+			jsx.executeScript("window.scrollBy(0,-200)");
+			Thread.sleep(10);
+			jsx.executeScript("window.scrollBy(0,-200)");
+			Thread.sleep(10);
 			jsx.executeScript("window.focus()", "");
 			Thread.sleep(100);
 			driver.manage().window().maximize();
-			Thread.sleep(100);
-			jsx.executeScript("window.focus()", "");
 			Thread.sleep(100);
 			WebDriverWait wait = new WebDriverWait(driver, 5);
 			By listingImage = By.cssSelector("img[class*='search-results-listings-list__item-photo']");

@@ -4,8 +4,12 @@ Simple duproprio.com scraper to get listing by commute time and distance from me
 
 ## Setup
 
+Clone projet
+Copy content of 'properties' into root
+Add google map key to secret.properties
+
 ### Requirements
-- Java 5+
+- Java 8+
 - Installed [chromedriver](https://sites.google.com/a/chromium.org/chromedriver/) and added to PATH
 - Maven
 
@@ -22,7 +26,7 @@ Simple duproprio.com scraper to get listing by commute time and distance from me
 - [ ] Scrap Centris.ca
 - [ ] Scrap kijiji.ca
 - [ ] Add rental scraping
-- [ ] Add multi-threading
+- [x] Add multi-threading
 - [ ] Database to store listings 
 
 ## Stretch

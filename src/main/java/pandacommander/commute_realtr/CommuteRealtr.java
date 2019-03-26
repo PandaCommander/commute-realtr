@@ -10,6 +10,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import pandacommander.commute_realtr.crawling.ChromeDriverRepository;
+import pandacommander.commute_realtr.crawling.WebDriverRepository;
 import pandacommander.commute_realtr.geocoding.GeoCoder;
 import pandacommander.commute_realtr.geocoding.GoogleGeoCoder;
 import pandacommander.commute_realtr.parsing.DefaultListingParser;
@@ -26,15 +28,9 @@ public class CommuteRealtr {
 		Configuration options = ConfigurationLoader.loadProperties("options.properties");
 
 		GeoCoder geoCoder = new GoogleGeoCoder(secrets, options);
+		WebDriverRepository driverRepository = new ChromeDriverRepository();
 
-		// headless chrome driver
-		ChromeDriverService.Builder builder = new ChromeDriverService.Builder().withSilent(true);
-		ChromeDriverService service = builder.usingAnyFreePort().build();
-		ChromeOptions driverOptions = new ChromeOptions();
-		driverOptions.addArguments("headless");
-		WebDriver driver = new ChromeDriver(service, driverOptions);
-
-		Scraper crawler = new DuproprioScraper(options, driver);
+		Scraper crawler = new DuproprioScraper(options, driverRepository);
 		ListingParser parser = new DefaultListingParser(options, geoCoder);
 
 		ListingTemplateEngine templateEngine = new ThymeLeafTemplateEngine();

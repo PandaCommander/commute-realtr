@@ -1,8 +1,11 @@
 
 # Created by https://www.gitignore.io/api/java,linux,maven,windows,eclipse,intellij
 
-### duproprio-scraper ###
-*secret.properties
+### commute-realtr ###
+secret.properties
+options.properties
+!properties/*
+listing*.html
 
 ### Eclipse ###
 

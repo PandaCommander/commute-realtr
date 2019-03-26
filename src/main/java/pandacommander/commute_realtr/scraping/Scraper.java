@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.configuration2.Configuration;
 import org.openqa.selenium.WebDriver;
 
+import pandacommander.commute_realtr.crawling.WebDriverRepository;
 import pandacommander.commute_realtr.listing.Listing;
 
 public abstract class Scraper {
@@ -12,15 +13,15 @@ public abstract class Scraper {
 	private int regionCode;
 	private int minPrice;
 	private int maxPrice;
-	private WebDriver driver;
+	private WebDriverRepository driverRepository;
 	private Configuration options;
 
-	public Scraper(Configuration options, WebDriver driver) {
+	public Scraper(Configuration options, WebDriverRepository driverRepository) {
 		super();
 		this.regionCode = options.getInt("region.code");
 		this.minPrice = options.getInt("price.min");
 		this.maxPrice = options.getInt("price.max");
-		this.driver = driver;
+		this.driverRepository = driverRepository;
 		this.options = options;
 	}
 
@@ -50,12 +51,12 @@ public abstract class Scraper {
 		this.maxPrice = maxPrice;
 	}
 
-	protected WebDriver getDriver() {
-		return driver;
+	public WebDriverRepository getDriverRepository() {
+		return driverRepository;
 	}
 
-	protected void setDriver(WebDriver driver) {
-		this.driver = driver;
+	public void setDriverRepository(WebDriverRepository driverRepository) {
+		this.driverRepository = driverRepository;
 	}
 
 	protected Configuration getOptions() {
