@@ -21,6 +21,7 @@ Add google map key to secret.properties
 - [x] Compute distance to nearest metro station
 - [x] Compute commute time 
 - [x] Save report to ~~PDF~~ HTML
+- [ ] Implement Bing map api integration (More free api calls)
 - [ ] Logging and error handling
 - [ ] Add multiple scraping source support
 - [ ] Scrap Centris.ca
